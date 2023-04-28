@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:status/widget/post.dart';
-import 'package:status/widget/searchFriendTextBox.dart';
+import 'package:status/widget/searchFriends.dart';
 
 class SearchScreen extends StatefulWidget {
   // const SearchScreen({super.key});

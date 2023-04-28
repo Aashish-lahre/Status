@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:status/screen/searchScreen.dart';
 
 import '../widget/post.dart';
-import '../widget/searchFriendTextBox.dart';
+import '../widget/searchFriends.dart';
 
 class AddFriends extends StatefulWidget {
   // const AddFriends({super.key});
