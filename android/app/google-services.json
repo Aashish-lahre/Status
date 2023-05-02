@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "977475856968",
+    "firebase_url": "https://status-database-c30b5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "status-database-c30b5",
+    "storage_bucket": "status-database-c30b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977475856968:android:0fcdcb242711117f14067d",
+        "android_client_info": {
+          "package_name": "com.example.status"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "977475856968-ejo7b0jmjqsqtgcn1tqgn6k6iv7pnfql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqUkqoVBD4mU0RuQOhxWK5HrgxCd3aB_w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "977475856968-ejo7b0jmjqsqtgcn1tqgn6k6iv7pnfql.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

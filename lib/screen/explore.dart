@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:status/screen/addFriends.dart';
 import 'package:status/widget/mostFollowed.dart';
@@ -33,6 +34,7 @@ class _ExploreState extends State<Explore> {
         widget.appBarHeight;
     maxHeight = maxHeight - maxHeight * 0.1;
     final double maxWidth = MediaQuery.of(context).size.width;
+
     return DefaultTabController(
       length: 3,
       child: Column(
