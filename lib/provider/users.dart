@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:ffi';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:status/provider/postModel.dart';
 
@@ -10,37 +14,184 @@ class User {
   List<int> followers;
   int age;
   RelationshipStatus relationshipStatus;
-  Image profilePicture;
+  String profilePicture;
   String bio;
   int contact;
   String location;
   List<PostModel> posts;
+  List<int> likes;
 
   User({
     required this.id,
     required this.name,
-    required List<int> followings,
-    required List<int> followers,
+    followings,
+    followers,
     required this.age,
     required this.relationshipStatus,
     required this.profilePicture,
     required this.bio,
     required this.contact,
     required this.location,
-    required this.posts,
+    posts,
+    likes,
   })  : followings = [],
+        likes = [],
+        posts = [],
         followers = [];
 }
 
 class UserProvider with ChangeNotifier {
   final List<User> _myFollowings = [];
+  final fb = FirebaseDatabase.instance;
+
+  final Map<String, Map<String, dynamic>> dummyData = {
+    "user_1": {
+      'id': 1,
+      'name': 'Ashish lahre',
+      'following': [2, 3, 4],
+      'followers': [5, 6, 7],
+      'age': 19,
+      'relationshipStatus': 'RelationshipStatus.single',
+      'profilePicture': 'location',
+      'bio': 'I am a developer',
+      'contact': 1234567890,
+      'location': 'Bhilai',
+      'posts': [],
+      'likes': []
+    },
+    "user_2": {
+      'id': 2,
+      'name': 'Alex dudy',
+      'following': [2, 3, 4],
+      'followers': [5, 6, 7],
+      'age': 19,
+      'relationshipStatus': 'RelationshipStatus.single',
+      'profilePicture': 'location',
+      'bio': 'I am a developer',
+      'contact': 1234567890,
+      'location': 'Bhilai',
+      'posts': [],
+      'likes': []
+    },
+    "user_3": {
+      'id': 3,
+      'name': 'Alex lahre',
+      'following': [2, 3, 4],
+      'followers': [5, 6, 7],
+      'age': 19,
+      'relationshipStatus': 'RelationshipStatus.single',
+      'profilePicture': 'location',
+      'bio': 'I am a developer',
+      'contact': 1234567890,
+      'location': 'Bhilai',
+      'posts': [],
+      'likes': []
+    },
+    "user_4": {
+      'id': 4,
+      'name': 'Emanual',
+      'following': [2, 3, 4],
+      'followers': [5, 6, 7],
+      'age': 19,
+      'relationshipStatus': 'RelationshipStatus.single',
+      'profilePicture': 'location',
+      'bio': 'I am a developer',
+      'contact': 1234567890,
+      'location': 'Bhilai',
+      'posts': [],
+      'likes': []
+    },
+    "user_5": {
+      'id': 2,
+      'name': 'christine',
+      'following': [2, 3, 4],
+      'followers': [5, 6, 7],
+      'age': 19,
+      'relationshipStatus': 'RelationshipStatus.single',
+      'profilePicture': 'location',
+      'bio': 'I am a developer',
+      'contact': 1234567890,
+      'location': 'Bhilai',
+      'posts': [],
+      'likes': []
+    },
+  };
+
+  void updateDatabase() {
+    final ref = fb.ref();
+
+    ref.child('Users').update(dummyData);
+  }
 
   List<User> get myFollowings {
     return [..._myFollowings];
   }
 
+  List<User> databaseJsonToUsers(Map<String, Map<String, dynamic>> data) {
+    final List<User> users = [];
+    data.forEach((key, value) {
+      users.add(
+        User(
+          id: value['id'],
+          name: value['name'],
+          age: value['age'],
+          relationshipStatus:
+              value['relationshipStatus'] == 'RelationshipStatus.taken'
+                  ? RelationshipStatus.taken
+                  : RelationshipStatus.single,
+          profilePicture: value['profilePicture'],
+          bio: value['bio'],
+          contact: value['contact'],
+          location: value['location'],
+        ),
+      );
+    });
+
+    return users;
+  }
+
+  Future<List<User>?> myRecommends() async {
+    final ref = await fb.ref().child('Users').once();
+    final snapshot = ref.snapshot.value;
+    // print('snapshot : $snapshot');
+
+    // Null check...
+    if (snapshot == null) {
+      return null;
+    }
+
+    final encodeData = jsonEncode(snapshot);
+    // print("encodeData : $encodeData");
+    const JsonDecoder decoder = JsonDecoder();
+
+    final data =
+        Map<String, Map<String, dynamic>>.from(decoder.convert(encodeData));
+
+    print('data :  ${data.runtimeType}');
+    return databaseJsonToUsers(data);
+  }
+
   void addUser(User user) {
-    // code to add user in firebase database
+    final ref = fb.ref();
+    final addUser = {
+      "user_${user.id}": {
+        'id': user.id,
+        'name': user.name,
+        'following': user.followings,
+        'followers': user.followers,
+        'age': user.age,
+        'relationshipStatus':
+            user.relationshipStatus == RelationshipStatus.single ? 0 : 1,
+        'profilePicture': user.profilePicture,
+        'bio': user.bio,
+        'contact': user.contact,
+        'location': user.location,
+        'posts': user.posts,
+        'likes': user.likes
+      }
+    };
+
+    ref.child('Users').update(addUser);
   }
 
   // List<User> fetchUsers() {

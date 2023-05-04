@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:status/widget/post.dart';
 import 'package:status/widget/searchFriends.dart';
+import 'package:status/widget/userProfileMinimised.dart';
+
+import '../provider/users.dart';
 
 class SearchScreen extends StatefulWidget {
   // const SearchScreen({super.key});
@@ -20,6 +24,8 @@ class _SearchScreenState extends State<SearchScreen> {
         _appBar.preferredSize.height;
 
     maxHeight = maxHeight - maxHeight * 0.1;
+    final getUsers = Provider.of<UserProvider>(context).myRecommends;
+
     return Scaffold(
         appBar: _appBar,
         body: Container(
@@ -36,10 +42,29 @@ class _SearchScreenState extends State<SearchScreen> {
               Expanded(
                 child: Container(
                   color: Colors.greenAccent,
-                  child: ListView.builder(
-                      itemCount: 6,
-                      itemBuilder: (context, index) {
-                        return Post();
+                  child: FutureBuilder(
+                      future: getUsers(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return const Center(
+                            child: Text('has Error'),
+                          );
+                        } else if (!snapshot.hasData) {
+                          print('has data : ${snapshot.hasData}');
+                          return const Center(
+                              child: Text('No Users to Display'));
+                        } else {
+                          return ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                return UserProfileMinimised(
+                                    snapshot.data![index]);
+                              });
+                        }
                       }),
                 ),
               ),
