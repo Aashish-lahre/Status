@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SearchFriends extends StatefulWidget {
-  const SearchFriends({super.key});
+  // const SearchFriends({super.key});
+  void Function(String text) callback;
+  SearchFriends(this.callback);
 
   @override
   State<SearchFriends> createState() => _SearchFriendsState();
@@ -9,6 +11,8 @@ class SearchFriends extends StatefulWidget {
 
 class _SearchFriendsState extends State<SearchFriends>
     with WidgetsBindingObserver {
+  // focus Node deals with the focus on textField,
+  // which indirectly also deals with keyBoard.
   final focusNode = FocusNode();
   bool readOnly = true;
   bool isKeyboardVisible = false;
@@ -72,6 +76,9 @@ class _SearchFriendsState extends State<SearchFriends>
         color: Colors.grey,
       ),
       child: TextField(
+        onChanged: (value) {
+          widget.callback(value);
+        },
         focusNode: focusNode,
         readOnly: readOnly,
         onTap: () {

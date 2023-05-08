@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:status/screen/authentication/screen/logInSignUpPage.dart';
 import 'package:status/screen/explore.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -44,6 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
       length: 2,
       child: SafeArea(
         child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () =>
+                Navigator.of(context).pushNamed(LogInSignUpPage.routeName),
+            child: Icon(Icons.login),
+          ),
           resizeToAvoidBottomInset: false,
           appBar: appbar,
           body: Column(
@@ -69,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   tabs: [
                     _mainTextBullets('Explore'),
                     _mainTextBullets('Friends'),
+                    // _mainTextBullets('auth'),
                   ],
                 ),
               ),

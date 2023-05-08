@@ -3,8 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:provider/provider.dart';
 import 'package:status/provider/users.dart';
+import 'package:status/screen/authentication/screen/logIn.dart';
+import 'package:status/screen/authentication/screen/logInSignUpPage.dart';
 import 'package:status/screen/homeScreen.dart';
 import 'package:status/screen/searchScreen.dart';
+// import './screen/authentication/screen/logInSignUpPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +44,11 @@ class MyApp extends StatelessWidget {
       home: const HomeScreen(),
       // child: const HomeScreen(),
 
-      routes: {SearchScreen.routeName: (context) => SearchScreen()},
+      routes: {
+        SearchScreen.routeName: (context) => SearchScreen(),
+        LogInSignUpPage.routeName: (context) => LogInSignUpPage(),
+        LoginPage.routeName: (context) => LoginPage(),
+      },
     );
   }
 }

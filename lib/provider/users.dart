@@ -150,24 +150,47 @@ class UserProvider with ChangeNotifier {
     return users;
   }
 
-  Future<List<User>?> myRecommends() async {
+  Future<List<User>> myRecommends() async {
     final ref = await fb.ref().child('Users').once();
     final snapshot = ref.snapshot.value;
     // print('snapshot : $snapshot');
 
     // Null check...
     if (snapshot == null) {
-      return null;
+      return [];
     }
 
     final encodeData = jsonEncode(snapshot);
-    // print("encodeData : $encodeData");
     const JsonDecoder decoder = JsonDecoder();
 
     final data =
         Map<String, Map<String, dynamic>>.from(decoder.convert(encodeData));
 
-    print('data :  ${data.runtimeType}');
+    return databaseJsonToUsers(data);
+  }
+
+  Future<List<User>> fetchUserByNameCharacter(String name) async {
+    final ref = await fb
+        .ref()
+        .child('Users')
+        .orderByChild('name')
+        .startAt(name)
+        .endAt('$name\uf8ff')
+        .once();
+
+    final snapshot = ref.snapshot.value;
+
+    // Null check...
+    if (snapshot == null) {
+      return [];
+    }
+
+    final encodeData = jsonEncode(snapshot);
+    const JsonDecoder decoder = JsonDecoder();
+
+    final data =
+        Map<String, Map<String, dynamic>>.from(decoder.convert(encodeData));
+
     return databaseJsonToUsers(data);
   }
 

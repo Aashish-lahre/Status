@@ -27,7 +27,7 @@ class _MostFollowedState extends State<MostFollowed> {
                       children: [
                         CircleAvatar(),
                         CircleAvatar(),
-                        Text('Ashish lahre'),
+                        Text('chandan'),
                         Container(
                           child: Row(children: []),
                         ),
