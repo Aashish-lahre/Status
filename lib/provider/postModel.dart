@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PostModel {
+class Post {
   final int userId;
   final int postId;
   String? text;
@@ -8,7 +8,7 @@ class PostModel {
   String? audio;
   String? video;
 
-  PostModel({
+  Post({
     required this.userId,
     required this.postId,
     this.text,

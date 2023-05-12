@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:status/provider/postModel.dart';
@@ -18,7 +16,7 @@ class User {
   String bio;
   int contact;
   String location;
-  List<PostModel> posts;
+  List<Post> posts;
   List<int> likes;
 
   User({
@@ -216,10 +214,6 @@ class UserProvider with ChangeNotifier {
 
     ref.child('Users').update(addUser);
   }
-
-  // List<User> fetchUsers() {
-  //   // code to fetch uesrs from database
-  // }
 
   // addUserasFollowing
   //likePosts

@@ -6,6 +6,7 @@ import 'package:status/provider/users.dart';
 import 'package:status/screen/authentication/screen/logIn.dart';
 import 'package:status/screen/authentication/screen/logInSignUpPage.dart';
 import 'package:status/screen/homeScreen.dart';
+import 'package:status/screen/profile/profile.dart';
 import 'package:status/screen/searchScreen.dart';
 // import './screen/authentication/screen/logInSignUpPage.dart';
 
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         SearchScreen.routeName: (context) => SearchScreen(),
         LogInSignUpPage.routeName: (context) => LogInSignUpPage(),
         LoginPage.routeName: (context) => LoginPage(),
+        Profile.routeName: (context) => Profile(),
       },
     );
   }

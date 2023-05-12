@@ -11,22 +11,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  AppBar appbar = AppBar(
-    title: Text('Status'),
-    primary: false,
-  );
+  final double appbarHeight = AppBar().preferredSize.height;
 
   Widget _mainTextBullets(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFF474E68),
+        color: const Color(0xFF474E68),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
           text,
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
         ),
       ),
     );
@@ -37,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // padding from top(status bar) - appbar height
     final double maxHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
-        appbar.preferredSize.height;
+        appbarHeight;
 
     final double maxWidth = MediaQuery.of(context).size.width;
 
@@ -48,14 +45,22 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: FloatingActionButton(
             onPressed: () =>
                 Navigator.of(context).pushNamed(LogInSignUpPage.routeName),
-            child: Icon(Icons.login),
+            child: const Icon(Icons.add),
           ),
           resizeToAvoidBottomInset: false,
-          appBar: appbar,
+          appBar: AppBar(
+            title: const Text('Status'),
+            actions: [
+              IconButton(
+                  onPressed: () => Navigator.of(context)
+                      .pushNamed(LogInSignUpPage.routeName),
+                  icon: const Icon(Icons.login))
+            ],
+          ),
           body: Column(
             children: [
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFF404258),
                 ),
                 width: double.infinity,
@@ -80,13 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                decoration: BoxDecoration(color: Color(0xff474E68)),
+                decoration: const BoxDecoration(color: Color(0xff474E68)),
                 height: maxHeight * 0.93,
                 child: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    Explore(appbar.preferredSize.height),
-                    Text('Friends'),
+                    Explore(appbarHeight),
+                    const Text('Friends'),
                   ],
                 ),
               )

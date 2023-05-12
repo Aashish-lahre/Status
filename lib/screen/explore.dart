@@ -19,7 +19,7 @@ class _ExploreState extends State<Explore> {
   Widget widgetIconTab(Icon icon) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFF474E68),
+        color: const Color(0xFF474E68),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(padding: const EdgeInsets.all(0.0), child: icon),
@@ -42,7 +42,7 @@ class _ExploreState extends State<Explore> {
           Container(
             width: double.infinity,
             height: maxHeight * 0.1,
-            child: TabBar(tabs: [
+            child: const TabBar(tabs: [
               Icon(Icons.favorite),
               Icon(Icons.person_add),
               Icon(Icons.people_alt),
@@ -54,9 +54,9 @@ class _ExploreState extends State<Explore> {
             child: TabBarView(
                 // viewportFraction: ,
                 children: [
-                  MostLiked(),
+                  const MostLiked(),
                   AddFriends(widget.appBarHeight),
-                  MostFollowed()
+                  const MostFollowed()
                 ]),
           )
         ],
