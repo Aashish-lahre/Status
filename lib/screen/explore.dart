@@ -54,7 +54,7 @@ class _ExploreState extends State<Explore> {
             child: TabBarView(
                 // viewportFraction: ,
                 children: [
-                  const MostLiked(),
+                  MostLiked(),
                   AddFriends(widget.appBarHeight),
                   const MostFollowed()
                 ]),

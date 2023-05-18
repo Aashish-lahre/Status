@@ -77,12 +77,12 @@ class _ProfileState extends State<Profile> {
               ListView.builder(
                   itemCount: 7,
                   itemBuilder: (ctx, index) {
-                    return Post();
+                    return Text('Ashish lahre');
                   }),
               ListView.builder(
                   itemCount: 7,
                   itemBuilder: (ctsx, index) {
-                    return Post();
+                    return Text('Lahre Ashish');
                   }),
             ]),
           ),

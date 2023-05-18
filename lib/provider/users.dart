@@ -148,6 +148,21 @@ class UserProvider with ChangeNotifier {
     return users;
   }
 
+  List<Post> databaseJsonToPosts(Map<String, Map<String, dynamic>> data) {
+    final List<Post> posts = [];
+    data.forEach((key, value) {
+      posts.add(Post(
+        userId: value['userId'],
+        postId: value['postId'],
+        userPostId: value['userPostId'],
+        text: value['text'],
+      ));
+    });
+
+    // print('posts from database(users.dart) : ${posts[0]}');
+    return posts;
+  }
+
   Future<List<User>> myRecommends() async {
     final ref = await fb.ref().child('Users').once();
     final snapshot = ref.snapshot.value;
@@ -215,10 +230,47 @@ class UserProvider with ChangeNotifier {
     ref.child('Users').update(addUser);
   }
 
+  void createPost(Post post) {
+    final ref = fb.ref();
+    final addPost = {
+      "post_${post.postId}": {
+        'userId': post.userId,
+        'postId': post.postId,
+        'userPostId': post.userPostId,
+        'text': post.text,
+        'imageUrl': post.image,
+        'audioUrl': post.audio,
+        'video': post.video,
+      }
+    };
+
+    ref.child('Users/user_${1}/posts').update(addPost);
+
+    notifyListeners();
+  }
+
+  Future<List<Post>> fetchPostFromUser(int userId) async {
+    final ref = await fb.ref().child('Users/user_$userId/posts').once();
+
+    final snapshot = ref.snapshot.value;
+
+    // Null check...
+    if (snapshot == null) {
+      return [];
+    }
+
+    final encodeData = jsonEncode(snapshot);
+    const JsonDecoder decoder = JsonDecoder();
+
+    final data =
+        Map<String, Map<String, dynamic>>.from(decoder.convert(encodeData));
+
+    return databaseJsonToPosts(data);
+  }
+
   // addUserasFollowing
   //likePosts
   //commentPosts
-  //addUser
   //deleteUser
   //editProfile
   //follow

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Post extends StatelessWidget {
-  // const Post({super.key});
+import '../provider/postModel.dart';
+
+class PostContainer extends StatelessWidget {
+  // const PostContainer({super.key});
   // final double maxWidth;
-  Post();
+  final Post post;
+  PostContainer(this.post);
 
   Widget _interactiveElement(IconData iconData, int value) {
     return Row(
@@ -67,7 +70,7 @@ class Post extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Container(
                         child: Text(
-                          'Hello everybody this is a long post paragraph to test if i have some wierd bugs',
+                          post.text!,
                           style: GoogleFonts.averiaSerifLibre(
                             textStyle: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w400),
