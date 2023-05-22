@@ -1,18 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:provider/provider.dart';
 import 'package:status/provider/users.dart';
+import 'package:status/screen/authScreen.dart';
 import 'package:status/screen/authentication/screen/logIn.dart';
 import 'package:status/screen/authentication/screen/logInSignUpPage.dart';
+import 'package:status/screen/authentication/screen/signUp.dart';
 import 'package:status/screen/homeScreen.dart';
 import 'package:status/screen/profile/profile.dart';
 import 'package:status/screen/searchScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 // import './screen/authentication/screen/logInSignUpPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     ChangeNotifierProvider(
       create: (context) => UserProvider(),
@@ -42,13 +51,14 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const HomeScreen(),
+      home: AuthScreen(),
       // child: const HomeScreen(),
 
       routes: {
         SearchScreen.routeName: (context) => SearchScreen(),
         LogInSignUpPage.routeName: (context) => LogInSignUpPage(),
         LoginPage.routeName: (context) => LoginPage(),
+        SignUp.routeName: (context) => SignUp(),
         Profile.routeName: (context) => Profile(),
       },
     );

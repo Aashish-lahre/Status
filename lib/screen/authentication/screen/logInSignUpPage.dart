@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:status/screen/authentication/screen/logIn.dart';
+import 'package:status/screen/authentication/screen/signUp.dart';
 
 class LogInSignUpPage extends StatelessWidget {
   const LogInSignUpPage({super.key});
@@ -59,7 +60,7 @@ class LogInSignUpPage extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 20.0),
                         child: InkWell(
                           onTap: () => Navigator.of(context)
-                              .pushNamed(LoginPage.routeName),
+                              .pushReplacementNamed(LoginPage.routeName),
                           child: Container(
                             alignment: Alignment.center,
                             width: maxWidth * 0.4,
@@ -80,23 +81,27 @@ class LogInSignUpPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Container(
-                        width: maxWidth * 0.4,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          // color: Color.fromARGB(255, 13, 56, 91),.
-                          border:
-                              Border.all(color: Colors.blue.shade900, width: 4),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
+                      InkWell(
+                        onTap: () => Navigator.of(context)
+                            .pushReplacementNamed(SignUp.routeName),
+                        child: Container(
+                          width: maxWidth * 0.4,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            // color: Color.fromARGB(255, 13, 56, 91),.
+                            border: Border.all(
+                                color: Colors.blue.shade900, width: 4),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       ),

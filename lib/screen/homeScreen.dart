@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:custom_floating_action_button/custom_floating_action_button.dart';
@@ -60,8 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text('Status'),
               actions: [
                 IconButton(
-                    onPressed: () => Navigator.of(context)
-                        .pushNamed(LogInSignUpPage.routeName),
+                    onPressed: () => FirebaseAuth.instance.signOut(),
                     icon: const Icon(Icons.login))
               ],
             ),
