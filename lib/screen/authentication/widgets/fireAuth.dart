@@ -11,7 +11,9 @@ class FireAuth {
       final UserCredential userCredential = await auth
           .createUserWithEmailAndPassword(email: email, password: password);
       user = userCredential.user;
+      print('user Credentials : $userCredential');
       await user!.updateDisplayName(name);
+
       await user.reload();
       user = auth.currentUser;
     } on FirebaseAuthException catch (error) {

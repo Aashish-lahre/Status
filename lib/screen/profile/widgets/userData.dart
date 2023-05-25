@@ -35,9 +35,9 @@ class UserData extends StatelessWidget {
         children: [
           CircleAvatar(),
           Text(user.name),
-          Text(relationshipStatus(user.relationshipStatus)),
+          // Text(relationshipStatus(user.relationshipStatus)),
           Text(user.bio),
-          Text(user.location),
+          // Text(user.location),
         ],
       ),
     );

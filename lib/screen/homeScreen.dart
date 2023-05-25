@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final double appbarHeight = AppBar().preferredSize.height;
+  final currentUser = FirebaseAuth.instance.currentUser;
 
   Widget _mainTextBullets(String text) {
     return Container(
@@ -36,6 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // print('current USER : $currentUser');
+    // print('current User name : ${currentUser!.displayName}');
+
     // padding from top(status bar) - appbar height
     final double maxHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -

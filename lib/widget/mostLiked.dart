@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:status/provider/postModel.dart';
@@ -14,10 +15,14 @@ class MostLiked extends StatefulWidget {
 }
 
 class _MostLikedState extends State<MostLiked> {
-  final _streamController = StreamController<List<Post>>();
+  final _streamController = StreamController<List<Map<String, dynamic>>>();
 
-  void _fetchData(Future<List<Post>> Function(int) getPosts) async {
-    final posts = await getPosts(1);
+  void _fetchData(
+      Future<List<Map<String, dynamic>>> Function(int) getPosts) async {
+    // final posts = await getPosts(FirebaseAuth.instance.currentUser!.uid);
+    // final Map<Post, String> postsAndUserName = {};
+    final posts = await getPosts(3);
+    // print('most liked(posts) : $posts');
 
     try {
       _streamController.add(posts);
@@ -26,16 +31,20 @@ class _MostLikedState extends State<MostLiked> {
     }
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
     final fetchPosts = Provider.of<UserProvider>(context).fetchPostFromUser;
-    _fetchData(fetchPosts);
+    final fetchUsersPosts =
+        Provider.of<UserProvider>(context).fetchPostFromUsers;
+    _fetchData(fetchUsersPosts);
+    // fetchUsersPosts(3);
+
     return StreamBuilder(
       stream: _streamController.stream,
       builder: (context, snapshot) {
@@ -46,10 +55,10 @@ class _MostLikedState extends State<MostLiked> {
             child: Text('has Error'),
           );
         } else if (!snapshot.hasData) {
-          print('has data : ${snapshot.hasData}');
+          // print('has data : ${snapshot.hasData}');
           return const Center(child: Text('No Posts to Display'));
         } else {
-          final List<Post> _posts = snapshot.data!;
+          final List<Map<String, dynamic>> _posts = snapshot.data!;
           // print('posts1 : ${_posts.length}');
           if (_posts.isEmpty) {
             return const Center(
@@ -61,7 +70,8 @@ class _MostLikedState extends State<MostLiked> {
               itemCount: _posts.length,
               itemBuilder: (context, index) {
                 // print('index : $index');
-                return PostContainer(_posts[index]);
+                return PostContainer(
+                    _posts[index]['post'], _posts[index]['user']);
               });
         }
       },

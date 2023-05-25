@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_octicons/flutter_octicons.dart';
+// import 'package:flutter_octicons/flutter_octicons.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:provider/provider.dart';
 import 'package:status/provider/postModel.dart';
 import 'package:status/provider/users.dart';
+import 'package:status/widget/utilis.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField({super.key});
@@ -24,6 +26,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     final createPost = Provider.of<UserProvider>(context).createPost;
+    final currentUser = auth.FirebaseAuth.instance.currentUser!;
     return ConstrainedBox(
       constraints: const BoxConstraints(
         // minHeight: 40,
@@ -74,11 +77,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       backgroundColor: Colors.deepPurple.shade300,
                       child: IconButton(
                           onPressed: () {
-                            createPost(Post(
-                                userId: 1,
-                                postId: 2,
-                                userPostId: 2,
-                                text: myController.text));
+                            createPost(
+                                Post(
+                                    userId: currentUser.uid,
+                                    postId: Utility.getCurrentTimeStamp()
+                                        .toString(),
+                                    userPostId: Utility.getRandomString(3),
+                                    text: myController.text),
+                                currentUser);
                             Navigator.of(context).pop();
                           },
                           icon: const Icon(Icons.send)),

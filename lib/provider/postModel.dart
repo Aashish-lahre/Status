@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Post {
-  final int userId;
-  final int postId;
-  final int userPostId;
+  final String userId;
+  final String postId;
+  final String userPostId;
+  List<String>? likes;
   String? text;
   String? image;
   String? audio;
@@ -13,6 +14,7 @@ class Post {
     required this.userId,
     required this.postId,
     required this.userPostId,
+    this.likes,
     this.text,
     this.image,
     this.audio,

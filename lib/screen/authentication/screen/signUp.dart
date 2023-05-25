@@ -1,10 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:status/screen/authentication/screen/logIn.dart';
 
 import '../../authScreen.dart';
 import '../widgets/fireAuth.dart';
 import '../widgets/validators.dart';
+import '../../../provider/users.dart';
 
 class SignUp extends StatefulWidget {
   // const SignUp({super.key});
@@ -25,6 +27,7 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.of(context).size.height;
     final maxWidth = MediaQuery.of(context).size.width;
+    final addUserInDatabase = Provider.of<UserProvider>(context).addUser;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -42,7 +45,7 @@ class _SignUpState extends State<SignUp> {
                     width: maxWidth * 0.8,
                     height: maxHeight * 0.4,
                     child: Stack(
-                      children: [
+                      children: const [
                         // Positioned(
                         //   left: -70,
                         //   top: -80,
@@ -119,13 +122,14 @@ class _SignUpState extends State<SignUp> {
                         TextButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              User? user =
+                              auth.User? user =
                                   await FireAuth.registerUsingEmailPassword(
                                 name: _nameTextController.text,
                                 email: _emailTextController.text,
                                 password: _passwordTextController.text,
                               );
                               if (user != null) {
+                                await addUserInDatabase(user);
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                         builder: (context) =>

@@ -1,275 +1,310 @@
-import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:status/provider/postModel.dart';
 
 enum RelationshipStatus { taken, single }
 
 class User {
-  final int id;
+  String userId;
   String name;
+  String email;
   List<int> followings;
   List<int> followers;
-  int age;
-  RelationshipStatus relationshipStatus;
-  String profilePicture;
+  // int age;
+  // RelationshipStatus relationshipStatus;
+  // String profilePicture;
   String bio;
-  int contact;
-  String location;
+  // int contact;
+  // String location;
   List<Post> posts;
   List<int> likes;
 
   User({
-    required this.id,
+    required this.userId,
     required this.name,
+    required this.email,
     followings,
     followers,
-    required this.age,
-    required this.relationshipStatus,
-    required this.profilePicture,
-    required this.bio,
-    required this.contact,
-    required this.location,
+    // required this.age,
+    // required this.relationshipStatus,
+    // required this.profilePicture,
+    bio,
+    // required this.contact,
+    // required this.location,
     posts,
     likes,
   })  : followings = [],
         likes = [],
         posts = [],
-        followers = [];
+        followers = [],
+        bio = '';
 }
 
 class UserProvider with ChangeNotifier {
   final List<User> _myFollowings = [];
   final fb = FirebaseDatabase.instance;
-
-  final Map<String, Map<String, dynamic>> dummyData = {
-    "user_1": {
-      'id': 1,
-      'name': 'Ashish lahre',
-      'following': [2, 3, 4],
-      'followers': [5, 6, 7],
-      'age': 19,
-      'relationshipStatus': 'RelationshipStatus.single',
-      'profilePicture': 'location',
-      'bio': 'I am a developer',
-      'contact': 1234567890,
-      'location': 'Bhilai',
-      'posts': [],
-      'likes': []
-    },
-    "user_2": {
-      'id': 2,
-      'name': 'Alex dudy',
-      'following': [2, 3, 4],
-      'followers': [5, 6, 7],
-      'age': 19,
-      'relationshipStatus': 'RelationshipStatus.single',
-      'profilePicture': 'location',
-      'bio': 'I am a developer',
-      'contact': 1234567890,
-      'location': 'Bhilai',
-      'posts': [],
-      'likes': []
-    },
-    "user_3": {
-      'id': 3,
-      'name': 'Alex lahre',
-      'following': [2, 3, 4],
-      'followers': [5, 6, 7],
-      'age': 19,
-      'relationshipStatus': 'RelationshipStatus.single',
-      'profilePicture': 'location',
-      'bio': 'I am a developer',
-      'contact': 1234567890,
-      'location': 'Bhilai',
-      'posts': [],
-      'likes': []
-    },
-    "user_4": {
-      'id': 4,
-      'name': 'Emanual',
-      'following': [2, 3, 4],
-      'followers': [5, 6, 7],
-      'age': 19,
-      'relationshipStatus': 'RelationshipStatus.single',
-      'profilePicture': 'location',
-      'bio': 'I am a developer',
-      'contact': 1234567890,
-      'location': 'Bhilai',
-      'posts': [],
-      'likes': []
-    },
-    "user_5": {
-      'id': 2,
-      'name': 'christine',
-      'following': [2, 3, 4],
-      'followers': [5, 6, 7],
-      'age': 19,
-      'relationshipStatus': 'RelationshipStatus.single',
-      'profilePicture': 'location',
-      'bio': 'I am a developer',
-      'contact': 1234567890,
-      'location': 'Bhilai',
-      'posts': [],
-      'likes': []
-    },
-  };
-
-  void updateDatabase() {
-    final ref = fb.ref();
-
-    ref.child('Users').update(dummyData);
-  }
+  final users = FirebaseFirestore.instance.collection('Users');
+  final posts = FirebaseFirestore.instance.collection('posts');
 
   List<User> get myFollowings {
     return [..._myFollowings];
   }
 
-  List<User> databaseJsonToUsers(Map<String, Map<String, dynamic>> data) {
+  List<User> databaseJsonToUsers(List<Map<dynamic, dynamic>> data) {
     final List<User> users = [];
-    data.forEach((key, value) {
-      users.add(
-        User(
-          id: value['id'],
-          name: value['name'],
-          age: value['age'],
-          relationshipStatus:
-              value['relationshipStatus'] == 'RelationshipStatus.taken'
-                  ? RelationshipStatus.taken
-                  : RelationshipStatus.single,
-          profilePicture: value['profilePicture'],
-          bio: value['bio'],
-          contact: value['contact'],
-          location: value['location'],
-        ),
-      );
+    data.forEach((element) {
+      users.add(User(
+        userId: element['id'],
+        name: element['name'],
+        email: element['email'],
+      ));
     });
 
     return users;
   }
 
-  List<Post> databaseJsonToPosts(Map<String, Map<String, dynamic>> data) {
+  List<Post> databaseJsonToPosts(List<Map<dynamic, dynamic>> data) {
     final List<Post> posts = [];
-    data.forEach((key, value) {
+
+    data.forEach((element) {
       posts.add(Post(
-        userId: value['userId'],
-        postId: value['postId'],
-        userPostId: value['userPostId'],
-        text: value['text'],
+        userId: element['userId'],
+        postId: element['postId'],
+        // likes: element['likes'],
+        likes: element['likes'] == null
+            ? []
+            : List<String>.from(element['likes'].map((e) => e as String)),
+        userPostId: element['userPostId'],
+        text: element['text'],
       ));
     });
 
-    // print('posts from database(users.dart) : ${posts[0]}');
+    // print('posts from database(users.dart) : ${posts[0].likes}');
     return posts;
   }
 
   Future<List<User>> myRecommends() async {
-    final ref = await fb.ref().child('Users').once();
-    final snapshot = ref.snapshot.value;
-    // print('snapshot : $snapshot');
+    final snapshot = await users.get();
 
-    // Null check...
-    if (snapshot == null) {
-      return [];
-    }
+    final documents = snapshot.docs;
+    final jsonData = documents
+        .map((doc) => {
+              'id': doc.id,
+              ...doc.data(),
+            })
+        .toList();
 
-    final encodeData = jsonEncode(snapshot);
-    const JsonDecoder decoder = JsonDecoder();
+    // final encodeData = jsonEncode(snapshot);
+    // const JsonDecoder decoder = JsonDecoder();
 
-    final data =
-        Map<String, Map<String, dynamic>>.from(decoder.convert(encodeData));
+    // final data =
+    //     Map<String, Map<String, dynamic>>.from(decoder.convert(encodeData));
 
-    return databaseJsonToUsers(data);
+    return databaseJsonToUsers(jsonData);
+  }
+
+  List<String> databaseJsonToUsersId(List<Map<String, String>> data) {
+    final List<String> userIds = [];
+
+    data.forEach((element) {
+      userIds.add(element['id'].toString());
+    });
+
+    return userIds;
   }
 
   Future<List<User>> fetchUserByNameCharacter(String name) async {
-    final ref = await fb
-        .ref()
-        .child('Users')
-        .orderByChild('name')
-        .startAt(name)
-        .endAt('$name\uf8ff')
-        .once();
+    final snapshot = await users
+        .orderBy('name')
+        .startAt([name]).endAt(['$name\uf8ff']).get();
 
-    final snapshot = ref.snapshot.value;
-
-    // Null check...
-    if (snapshot == null) {
-      return [];
-    }
-
-    final encodeData = jsonEncode(snapshot);
-    const JsonDecoder decoder = JsonDecoder();
-
-    final data =
-        Map<String, Map<String, dynamic>>.from(decoder.convert(encodeData));
-
-    return databaseJsonToUsers(data);
+    final documents = snapshot.docs;
+    final jsonData = documents
+        .map((doc) => {
+              'id': doc.id,
+              ...doc.data(),
+            })
+        .toList();
+    return databaseJsonToUsers(jsonData);
   }
 
-  void addUser(User user) {
-    final ref = fb.ref();
+  Future<void> addUser(auth.User user) async {
+    final db = FirebaseFirestore.instance;
     final addUser = {
-      "user_${user.id}": {
-        'id': user.id,
-        'name': user.name,
-        'following': user.followings,
-        'followers': user.followers,
-        'age': user.age,
-        'relationshipStatus':
-            user.relationshipStatus == RelationshipStatus.single ? 0 : 1,
-        'profilePicture': user.profilePicture,
-        'bio': user.bio,
-        'contact': user.contact,
-        'location': user.location,
-        'posts': user.posts,
-        'likes': user.likes
-      }
+      'userId': user.uid,
+      'name': user.displayName,
+      'email': user.email,
     };
 
-    ref.child('Users').update(addUser);
+    // ref.child('Users').update(addUser);
+    final users = db.collection('Users');
+
+    await users.doc(user.uid).set(addUser);
+    // print('doc id : ${doc.id}');
   }
 
-  void createPost(Post post) {
-    final ref = fb.ref();
+  void createPost(Post post, auth.User currentUser) async {
+    final currentUser = auth.FirebaseAuth.instance.currentUser!;
+    // final ref = fb.ref();
+
     final addPost = {
-      "post_${post.postId}": {
-        'userId': post.userId,
-        'postId': post.postId,
-        'userPostId': post.userPostId,
-        'text': post.text,
-        'imageUrl': post.image,
-        'audioUrl': post.audio,
-        'video': post.video,
-      }
+      'userId': post.userId,
+      'postId': post.postId,
+      'userPostId': post.userPostId,
+      'likes': post.likes,
+      'text': post.text,
+      'imageUrl': post.image,
+      'audioUrl': post.audio,
+      'video': post.video,
     };
 
-    ref.child('Users/user_${1}/posts').update(addPost);
+    final postRef = posts.doc(post.postId);
+    await postRef.set(addPost);
 
     notifyListeners();
   }
 
-  Future<List<Post>> fetchPostFromUser(int userId) async {
-    final ref = await fb.ref().child('Users/user_$userId/posts').once();
+  Future<List<String>> firstUserIds(int length) async {
+    final snapshot = await users.limit(length).get();
+    final jsonData = snapshot.docs.map((e) => {'id': e.id}).toList();
 
-    final snapshot = ref.snapshot.value;
+    return databaseJsonToUsersId(jsonData);
+  }
 
-    // Null check...
-    if (snapshot == null) {
+  Future<List<Map<String, dynamic>>> fetchPostFromUsers(int length) async {
+    // fetch first length users from database
+
+    List<Map<String, dynamic>> postsAndUsers = [];
+
+    List<String> userIds = await firstUserIds(length);
+
+    // query post from each users
+
+    final snapshot = await posts.where('userId', whereIn: userIds).get();
+
+    final jsonPostData = snapshot.docs
+        .map((doc) => {
+              'id': doc.id,
+              ...doc.data(),
+            })
+        .toList();
+
+    final List<Post> fetchedposts = databaseJsonToPosts(jsonPostData);
+
+    if (fetchedposts.isEmpty) {
       return [];
     }
+    final List<User> initialfetchedUsers =
+        await fetchUserFromPosts(fetchedposts);
 
-    final encodeData = jsonEncode(snapshot);
-    const JsonDecoder decoder = JsonDecoder();
+    final List<User> result = [];
 
-    final data =
-        Map<String, Map<String, dynamic>>.from(decoder.convert(encodeData));
+    for (var post in fetchedposts) {
+      result.add(
+          initialfetchedUsers.firstWhere((user) => user.userId == post.userId));
+    }
 
-    return databaseJsonToPosts(data);
+    if (result.length == fetchedposts.length) {
+      // combine them
+
+      // print('got posts and users list with same length');
+
+      for (int i = 0; i < fetchedposts.length; i++) {
+        postsAndUsers.add({'post': fetchedposts[i], 'user': result[i]});
+      }
+
+      // print('posts and users : $postsAndUsers');
+    } else {
+      // print('not same length');
+    }
+    return postsAndUsers;
+  }
+
+  List spreadUserId(List<Post> posts) {
+    final post = [];
+    for (var element in posts) {
+      post.add(element.userId);
+    }
+
+    return post;
+  }
+
+  Future<List<User>> fetchUserFromPosts(List<Post> posts) async {
+    // final snapshot =
+    //     await users.where('userId', whereIn: spreadPost(posts)).get();
+    final snapshot = await users
+        .where(
+          // FieldPath.documentId,
+          'userId',
+          whereIn: spreadUserId(posts),
+        )
+        .get();
+    final jsonData = snapshot.docs
+        .map((doc) => {
+              'id': doc.id,
+              ...doc.data(),
+            })
+        .toList();
+
+    // print('jsondata---- : $jsonData');
+
+    return databaseJsonToUsers(jsonData);
+  }
+
+  Future<List<Post>> fetchPostFromUser(String userId) async {
+    final snapshot = await posts.where('userId', isEqualTo: userId).get();
+    final documents = snapshot.docs;
+    // print('documents : $documents');
+
+    final jsonData = documents
+        .map((doc) => {
+              'id': doc.id,
+              ...doc.data(),
+            })
+        .toList();
+
+    return databaseJsonToPosts(jsonData);
+  }
+
+  void likePost(Post post, String currentUserId) async {
+    // final ref = fb.ref('Users/user_${post.userId}/posts/post_${post.postId}');
+    // final snapshot =
+    //     users.doc(post.userId).collection('posts').doc(post.postId).update({
+    //   'likes': FieldValue.arrayUnion([currentUserId])
+    // });
+
+    await posts.doc(post.postId).update({
+      'likes': FieldValue.arrayUnion([currentUserId])
+    });
+
+    notifyListeners();
+  }
+
+  void unlikePost(Post post, String currentUserId) async {
+    // final snapshot =
+    //     users.doc(post.userId).collection('posts').doc(post.postId).update({
+    //   'likes': FieldValue.arrayRemove([currentUserId])
+    // });
+
+    await posts.doc(post.postId).update({
+      'likes': FieldValue.arrayRemove([currentUserId])
+    });
+
+    notifyListeners();
+  }
+
+  Future<User> getUser(String userId) async {
+    final snapshot = await users.doc(userId).get();
+
+    return User(
+        userId: snapshot.data()!['userId'],
+        name: snapshot.data()!['name'],
+        email: snapshot.data()!['email']);
   }
 
   // addUserasFollowing
-  //likePosts
   //commentPosts
   //deleteUser
   //editProfile
